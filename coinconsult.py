@@ -40,8 +40,7 @@ def webconsult(currency,url):
             if (currency == 'btc') or (currency == 'BTC'):
                 field = 'btc_usd'
             else:
-                field = currency + '_usd'
-                print(field)
+                field = currency + '_usd'             
             bitcoinvalue = float(response[field]['last'])
             exchange = "yobit"
         matrix[i][0] = exchange
