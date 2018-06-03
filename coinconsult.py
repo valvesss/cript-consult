@@ -37,7 +37,7 @@ def webconsult(currency,url):
             bitcoinvalue = float(response['result']['Last'])
             exchange = "bittrex"
         if "yobit" in url[i]:
-            if (currency == 'btc') or (currenc == 'BTC'):
+            if (currency == 'btc') or (currency == 'BTC'):
                 field = 'btc_usd'
             else:
                 field = currency + '_btc'
