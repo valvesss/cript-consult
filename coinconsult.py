@@ -14,6 +14,7 @@ def coinstats():
     else:
         url.append("https://api.kraken.com/0/public/Ticker?pair=%sUSD" % currency)
         url.append("https://yobit.net/api/3/ticker/%s_usd" % currency)
+    url.append("https://poloniex.com/public?command=returnTicker")
     url.append("https://www.okcoin.com/api/v1/ticker.do?symbol=%s_usd" % currency)
     url.append("https://bittrex.com/api/v1.1/public/getticker?market=usdt-%s" % currency)
     return webconsult(currency,url)
@@ -24,7 +25,7 @@ def webconsult(currency,url):
     for i in range(aux):
         response = query(url[i])
         if "kraken" in url[i]:
-            if (currency == 'btc') or (currency == 'BTC'):
+            if currency == 'btc':
                 field = 'XXBTZUSD'
             else:
                 field = 'X' + currency.upper() + 'ZUSD'
@@ -37,12 +38,16 @@ def webconsult(currency,url):
             bitcoinvalue = response['result']['Last']
             exchange = "bittrex"
         if "yobit" in url[i]:
-            if (currency == 'btc') or (currency == 'BTC'):
+            if currency == 'btc':
                 field = 'btc_usd'
             else:
                 field = currency + '_usd'
             bitcoinvalue = response[field]['last']
             exchange = "yobit"
+        if "poloniex" in url[i]:
+            field = 'USDT_' + currency.upper()
+            bitcoinvalue = response[field]['last']
+            exchange = "poloniex"
         matrix[i][0] = exchange
         matrix[i][1] = round(float(bitcoinvalue),2)
     matrix.sort(key=lambda x:x[1],reverse=True)
@@ -59,7 +64,7 @@ def presentation(matrix,currency):
     return
 
 if len(sys.argv) < 2:
-    print("Moeda inexistente. Modo de usar: \'./coinconsult.py btc\'.")
+    print("Moeda inexistente. Modo de usar: \'./coinconsult.py btc\'. *case sensitive*.")
     exit()
 
 coinstats()
