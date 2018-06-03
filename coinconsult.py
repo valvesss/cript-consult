@@ -10,10 +10,9 @@ def coinstats():
     url = []
     if (currency == 'btc') or (currency == 'BTC'):
         url.append("https://api.kraken.com/0/public/Ticker?pair=XBTUSD")
-        url.append("https://yobit.net/api/3/ticker/btc_usd")
     else:
         url.append("https://api.kraken.com/0/public/Ticker?pair=%sUSD" % currency)
-        url.append("https://yobit.net/api/3/ticker/%s_usd" % currency)
+    url.append("https://yobit.net/api/3/ticker/%s_usd" % currency)
     url.append("https://poloniex.com/public?command=returnTicker")
     url.append("https://www.okcoin.com/api/v1/ticker.do?symbol=%s_usd" % currency)
     url.append("https://bittrex.com/api/v1.1/public/getticker?market=usdt-%s" % currency)
@@ -60,7 +59,8 @@ def presentation(matrix,currency):
         time.sleep(0.5)
     size = len(matrix)-1
     diff = round((matrix[0][1]-matrix[size][1]),2)
-    print("\nThe biggest difference is between %s and %s with a %s gap of: %s USD." % ((matrix[0][0]).title(),(matrix[size][0]).title(),currency.upper(),diff))
+    perc = round(((matrix[0][1]-matrix[size][1])/matrix[size][1])*100,2)
+    print("\nThe biggest difference is between %s and %s with a %s gap of: %s USD. Percent diff of: %s%%." % ((matrix[0][0]).title(),(matrix[size][0]).title(),currency.upper(),diff,perc))
     return
 
 if len(sys.argv) < 2:
