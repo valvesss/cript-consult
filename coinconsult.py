@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-import requests, json, sys
+import requests, json, sys, time
 
 def query(url):
     response = requests.get(url=url).json()
@@ -16,7 +16,7 @@ def coinstats():
         url.append("https://yobit.net/api/3/ticker/%s_usd" % currency)
     url.append("https://www.okcoin.com/api/v1/ticker.do?symbol=%s_usd" % currency)
     url.append("https://bittrex.com/api/v1.1/public/getticker?market=usdt-%s" % currency)
-    webconsult(currency,url)
+    return webconsult(currency,url)
 
 def webconsult(currency,url):
     aux = len(url)
@@ -28,30 +28,38 @@ def webconsult(currency,url):
                 field = 'XXBTZUSD'
             else:
                 field = 'X' + currency.upper() + 'ZUSD'
-            bitcoinvalue = float(response['result'][field]['c'][0])
+            bitcoinvalue = response['result'][field]['c'][0]
             exchange = "kraken"
         if "okcoin" in url[i]:
-            bitcoinvalue = float(response['ticker']['last'])
+            bitcoinvalue = response['ticker']['last']
             exchange = "okcoin"
         if "bittrex" in url[i]:
-            bitcoinvalue = float(response['result']['Last'])
+            bitcoinvalue = response['result']['Last']
             exchange = "bittrex"
         if "yobit" in url[i]:
             if (currency == 'btc') or (currency == 'BTC'):
                 field = 'btc_usd'
             else:
-                field = currency + '_usd'             
-            bitcoinvalue = float(response[field]['last'])
+                field = currency + '_usd'
+            bitcoinvalue = response[field]['last']
             exchange = "yobit"
         matrix[i][0] = exchange
-        matrix[i][1] = bitcoinvalue
+        matrix[i][1] = round(float(bitcoinvalue),2)
     matrix.sort(key=lambda x:x[1],reverse=True)
+    presentation(matrix,currency)
+
+def presentation(matrix,currency):
     print("\nPreço do %s em USD:\n" % currency.upper())
     for i in range(len(matrix)):
         print(matrix[i][0].title() + ":  \t",round(float(matrix[i][1]),8))
-    print("")
+        time.sleep(0.5)
+    size = len(matrix)-1
+    diff = round((matrix[0][1]-matrix[size][1]),2)
+    print("\nThe biggest difference is between %s and %s with a %s gap of: %s USD." % ((matrix[0][0]).title(),(matrix[size][0]).title(),currency.upper(),diff))
+    return
 
 if len(sys.argv) < 2:
     print("Moeda inexistente. Modo de usar: \'./coinconsult.py btc\'.")
     exit()
+
 coinstats()
