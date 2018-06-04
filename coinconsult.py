@@ -1,5 +1,13 @@
 #!/usr/bin/env python3
-import requests, json, sys, time
+import requests, json, sys, time, urllib.request
+
+def internet_on():
+    try:
+        urllib.request.urlopen('http://216.58.192.142', timeout=1)
+        return True
+    except urllib.request.URLError as err: 
+        print("No connection to Internet Available.")
+        exit()
 
 def query(url):
     response = requests.get(url=url).json()
@@ -55,7 +63,7 @@ def webconsult(currency,url):
 def presentation(matrix,currency):
     print("\nPreço do %s em USD:\n" % currency.upper())
     for i in range(len(matrix)):
-        print(matrix[i][0].title() + ":  \t",round(float(matrix[i][1]),8))
+        print(matrix[i][0].title() + ":  \t",matrix[i][1])
         time.sleep(0.5)
     size = len(matrix)-1
     diff = round((matrix[0][1]-matrix[size][1]),2)
@@ -67,4 +75,5 @@ if len(sys.argv) < 2:
     print("Moeda inexistente. Modo de usar: \'./coinconsult.py btc\'. *case sensitive*.")
     exit()
 
+internet_on()
 coinstats()
